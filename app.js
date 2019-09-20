@@ -1,6 +1,12 @@
-const express = require('express')
-const mongoose = require('mongoose')
+const express = require('express');
+const mongoose = require('mongoose');
+const morgan = require('morgan');
+const bodyParSer = require('body-parser');
+const cookieParser = require('cookie-parser');
+const expressValidator = require('express-validator');
+
 require('dotenv').config();
+
 // import routes 
 const userRoutes = require('./routes/user')
 //app 
@@ -12,8 +18,14 @@ mongoose.connect(process.env.DATABASE, {
     useCreateIndex: true
 }).then(() => console.log('data connected'))
 
+//middlewares
+app.use(morgan('dev'))
+app.use(bodyParSer.json())
+app.use(cookieParser())
+app.use(expressValidator())
+
 // routes  middleware 
-app.use(userRoutes);
+app.use('/api', userRoutes);
 
 const port = process.env.PORT || 8000
 
