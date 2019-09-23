@@ -1,7 +1,7 @@
-exports.userSingupValidator = (req, res) =>{
+exports.userSingupValidator = (req, res, next) =>{
     req.check('name', 'Name is required').notEmpty()
     req.check('email', 'Email must be between 3 to 32 chracters')
-    .match(/.+\@.+\..+/)
+    .matches(/.+\@.+\..+/)
     .withMessage('Email must contain @')
     .isLength({
         min: 4,
@@ -12,4 +12,12 @@ exports.userSingupValidator = (req, res) =>{
     .isLength({min: 6})
     .withMessage('password must contain at least 6 characters')
     .matches(/\d/)
+    .withMessage("password must contain a number");
+    const errors = req.validationErrors();
+    console.log(errors);
+    if(errors){
+        const firstError = errors.map(error => error.msg)[0];
+        return res.status(400).json({error: firstError})
+    }
+    next()
 }
